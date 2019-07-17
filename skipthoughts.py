@@ -17,12 +17,9 @@ from nltk.tokenize import word_tokenize
 
 profile = False
 
-#-----------------------------------------------------------------------------#
-# Specify model and table locations here
-#-----------------------------------------------------------------------------#
-path_to_models = '/u/rkiros/public_html/models/'
-path_to_tables = '/u/rkiros/public_html/models/'
-#-----------------------------------------------------------------------------#
+# Reads models and tables from environment variables
+path_to_models = os.environ.get('SKIPTHOUGHTS_MODELS_PATH', 'models/')
+path_to_tables = os.environ.get('SKIPTHOUGHTS_TABLES_PATH', 'models/')
 
 path_to_umodel = path_to_models + 'uni_skip.npz'
 path_to_bmodel = path_to_models + 'bi_skip.npz'
