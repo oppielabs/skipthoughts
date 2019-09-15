@@ -254,14 +254,6 @@ def load_params(path, params):
     return params
 
 
-# layers: 'name': ('parameter initializer', 'feedforward')
-layers = {'gru': ('param_init_gru', 'gru_layer')}
-
-def get_layer(name):
-    fns = layers[name]
-    return (eval(fns[0]), eval(fns[1]))
-
-
 def init_params(options):
     """
     initialize all parameters needed for the encoder
@@ -272,7 +264,7 @@ def init_params(options):
     params['Wemb'] = norm_weight(options['n_words_src'], options['dim_word'])
 
     # encoder: GRU
-    params = get_layer(options['encoder'])[0](options, params, prefix='encoder',
+    params = param_init_gru(options, params, prefix='encoder',
                                               nin=options['dim_word'], dim=options['dim'])
     return params
 
@@ -287,9 +279,9 @@ def init_params_bi(options):
     params['Wemb'] = norm_weight(options['n_words_src'], options['dim_word'])
 
     # encoder: GRU
-    params = get_layer(options['encoder'])[0](options, params, prefix='encoder',
+    params = param_init_gru(options, params, prefix='encoder',
                                               nin=options['dim_word'], dim=options['dim'])
-    params = get_layer(options['encoder'])[0](options, params, prefix='encoder_r',
+    params = param_init_gru(options, params, prefix='encoder_r',
                                               nin=options['dim_word'], dim=options['dim'])
     return params
 
@@ -303,7 +295,7 @@ def build_encoder(tparams, options):
     x_mask = tensor.matrix('x_mask', dtype='float32')
 
     # encoder
-    proj = get_layer(options['encoder'])[1](tparams, embedding, options,
+    proj = gru_layer(tparams, embedding, options,
                                             prefix='encoder',
                                             mask=x_mask)
     ctx = proj[0][-1]
@@ -322,10 +314,10 @@ def build_encoder_bi(tparams, options):
     xr_mask = x_mask[::-1]
 
     # encoder
-    proj = get_layer(options['encoder'])[1](tparams, embedding, options,
+    proj = gru_layer(tparams, embedding, options,
                                             prefix='encoder',
                                             mask=x_mask)
-    projr = get_layer(options['encoder'])[1](tparams, embeddingr, options,
+    projr = gru_layer(tparams, embeddingr, options,
                                              prefix='encoder_r',
                                              mask=xr_mask)
 
